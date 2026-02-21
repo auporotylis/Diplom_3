@@ -6,11 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class ConstructorPageTest {
@@ -20,15 +15,13 @@ public class ConstructorPageTest {
     private String checkTab;
     private ConstructorPage constructorPage;
 
-    private String attrClass = "class";
-    private String valueCurrent = "tab_tab_type_current";
 
     @Parameterized.Parameters(name = "Активная вкладка перед тестом: {0}, проверяемая вкладка: {1}")
     public static Object[][] getData() {
         return new Object[][]{
                 {ConstructorPage.tabSauces, ConstructorPage.tabBuns},
-                {null,  ConstructorPage.tabSauces},
-                {null,  ConstructorPage.tabFillings},
+                {null, ConstructorPage.tabSauces},
+                {null, ConstructorPage.tabFillings},
         };
     }
 
@@ -44,11 +37,7 @@ public class ConstructorPageTest {
         driver.get(ConstructorPage.URL_MAIN);
         constructorPage = new ConstructorPage(driver);
         if (startTab != null) {
-            WebElement tab = driver.findElement(ConstructorPage.tabParentDiv(startTab));
             constructorPage.clickTab(startTab);
-
-            new WebDriverWait(driver, 5)
-                    .until(ExpectedConditions.attributeContains(tab, attrClass, valueCurrent));
         }
     }
 
@@ -62,11 +51,6 @@ public class ConstructorPageTest {
     @Description("При переходе на вкладку она должна стать активной")
     public void transitionToTabIsWorkTest() {
         constructorPage.clickTab(checkTab);
-        WebDriverWait wait = new WebDriverWait(driver, 5);
-        wait.until(ExpectedConditions.attributeContains(ConstructorPage.tabParentDiv(checkTab), attrClass, valueCurrent));
-
-        assertEquals("Выбранная вкладка " + checkTab + " неактивна. Активна вкладка " + ConstructorPage.getActiveTab(),
-                ConstructorPage.getActiveTab(), checkTab);
-
+        constructorPage.checkActiveTabName(checkTab);
     }
 }

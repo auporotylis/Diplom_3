@@ -1,27 +1,18 @@
 import io.qameta.allure.Description;
-import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import java.util.List;
-
-import static org.junit.Assert.assertFalse;
-
 
 public class LoginPageTest {
     private static WebDriver driver;
 
-    @BeforeClass
-    public static void setUpClass() {
-        TestUser.createTestUser();
-    }
-
     @Before
-    public void runBrowser() {
+    public void setUp() {
+        Response response = TestUser.createTestUser();
+        TestUser.checkCreateUserStatus(response);
         driver = BaseTest.getDriver();
     }
 
@@ -39,9 +30,9 @@ public class LoginPageTest {
         LoginPage loginPage = new LoginPage(driver);
 
         mainPage.clickButtonLogInAccount();
-
-        fillForm(loginPage);
-        checkLogIn();
+        LoginPage.fillForm(loginPage);
+        loginPage.clickButtonLogIn();
+        LoginPage.checkLogIn(driver);
     }
 
     @Test
@@ -53,9 +44,9 @@ public class LoginPageTest {
         LoginPage loginPage = new LoginPage(driver);
 
         mainPage.clickButtonPersonalAccount();
-
-        fillForm(loginPage);
-        checkLogIn();
+        LoginPage.fillForm(loginPage);
+        loginPage.clickButtonLogIn();
+        LoginPage.checkLogIn(driver);
     }
 
     @Test
@@ -70,8 +61,9 @@ public class LoginPageTest {
         RegisterPage registerPage = new RegisterPage(driver);
         registerPage.clickLinkLogIn();
 
-        fillForm(loginPage);
-        checkLogIn();
+        LoginPage.fillForm(loginPage);
+        loginPage.clickButtonLogIn();
+        LoginPage.checkLogIn(driver);
     }
 
     @Test
@@ -85,23 +77,8 @@ public class LoginPageTest {
         ForgotPasswordPage forgotPasswordPage = new ForgotPasswordPage(driver);
         forgotPasswordPage.clickLinkLogIn();
 
-        fillForm(loginPage);
-        checkLogIn();
-    }
-
-
-    @Step("Заполнение полей формы")
-    private void fillForm(LoginPage loginPage) {
-        loginPage.clickFieldEmail();
-        loginPage.fillFieldEmail(TestUser.email);
-        loginPage.clickFieldPassword();
-        loginPage.fillFieldPassword(TestUser.password);
+        LoginPage.fillForm(loginPage);
         loginPage.clickButtonLogIn();
-    }
-
-    @Step("Проверка входа")
-    public void checkLogIn() {
-        List<WebElement> elements = driver.findElements(MainPage.buttonCreateOrder);
-        assertFalse("Кнопка оформления заказа не отображается - вход не выполнен " + System.getProperty("browser", "chrome"), elements.isEmpty());
+        LoginPage.checkLogIn(driver);
     }
 }

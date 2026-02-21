@@ -1,3 +1,4 @@
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -17,15 +18,15 @@ public class MainPage {
     //Кнопка "Войти в аккаунт"
     By buttonLogInAccount = By.xpath("(//button[text()='Войти в аккаунт'])");
 
-    //Кнопка "Войти в аккаунт"
-    static By buttonCreateOrder = By.xpath("(//button[text()='Оформить заказ'])");
+    //Кнопка "Оформить заказ"
+    static By buttonCreateOrder = By.xpath("(//button[contains(text(), 'Оформить заказ')])");
 
-    //клик по кнопке "Личный Кабинет"
+    @Step("Клик по кнопке \"Личный Кабинет\"")
     public void clickButtonPersonalAccount() {
         driver.findElement(buttonPersonalAccount).click();
     }
 
-    //клик по кнопке "Войти в аккаунт"
+    @Step("Клик по кнопке \"Войти в аккаунт\"")
     public void clickButtonLogInAccount() {
         driver.findElement(buttonLogInAccount).click();
     }

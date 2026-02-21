@@ -4,10 +4,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import static org.junit.Assert.assertTrue;
 
 public class RegisterPageTest {
     private WebDriver driver;
@@ -38,9 +34,8 @@ public class RegisterPageTest {
         registerPage.fillFieldPassword("1q2w3e4r");
 
         registerPage.clickButtonRegistration();
-        new WebDriverWait(driver, 2)
-                .until(ExpectedConditions.visibilityOfElementLocated(LoginPage.buttonLogIn));
-        assertTrue(driver.findElement(LoginPage.buttonLogIn).isDisplayed());
+        registerPage.waitingForLoginRedirect();
+        registerPage.checkRegistration();
     }
 
     @Test
@@ -58,8 +53,7 @@ public class RegisterPageTest {
         registerPage.fillFieldPassword("1q2w3");
 
         registerPage.clickButtonRegistration();
-        new WebDriverWait(driver, 2)
-                .until(ExpectedConditions.visibilityOfElementLocated(registerPage.errorPassword));
-        assertTrue(driver.findElement(registerPage.errorPassword).isDisplayed());
+        registerPage.waitingForPasswordError(RegisterPage.errorPassword);
+        registerPage.checkPasswordError();
     }
 }

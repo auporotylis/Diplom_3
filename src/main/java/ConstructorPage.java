@@ -1,32 +1,47 @@
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import static org.junit.Assert.assertEquals;
 
 public class ConstructorPage {
 
-    private static WebDriver driver;
+    private WebDriver driver;
 
     public static String tabBuns = "Булки";
     public static String tabSauces = "Соусы";
     public static String tabFillings = "Начинки";
-
     public static final String URL_MAIN = "https://stellarburgers.education-services.ru";
 
     public ConstructorPage(WebDriver driver) {
-        ConstructorPage.driver = driver;
+        this.driver = driver;
     }
 
-    //клик по вкладке конструктора
+    //вкладка конструктора
+    public By tab(String sectionName) {
+        return By.xpath("//span[text()='" + sectionName + "']");
+    }
+
+    //активная вкладка конструктора
+    public static By activeTab = By.xpath("//div[contains(@class, 'tab_tab_type_current')]//span");
+
+    @Step("Клик по вкладке конструктора")
     public void clickTab(String sectionName) {
-        driver.findElement(By.xpath("//span[text()='" + sectionName + "']")).click();
+        driver.findElement(tab(sectionName)).click();
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+        wait.until(ExpectedConditions.textToBe(activeTab, sectionName));
     }
 
-    //получение названия активной вкладки
-    public static String  getActiveTab() {
-        return driver.findElement(By.xpath("//div[contains(@class, 'tab_tab_type_current')]//span")).getText();
+    @Step("Получение названия активной вкладки")
+    public String getActiveTab() {
+        return driver.findElement(activeTab).getText();
     }
 
-    //получение родительского div
-    public static By tabParentDiv(String startTab) {
-        return By.xpath("//span[text()='" + startTab + "']/parent::div");
+    @Step("Проверка названия активной вкладки")
+    public void checkActiveTabName(String checkTabName) {
+        assertEquals("Выбранная вкладка " + checkTabName + " неактивна. Активна вкладка " +  getActiveTab(),
+                checkTabName,  getActiveTab());
     }
 }

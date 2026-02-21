@@ -1,15 +1,14 @@
+import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
-import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_OK;
 
 public class TestUser {
-    public static String email = "ivettisimos" + System.currentTimeMillis() + "@ya.ru";
-    public static String password = "leozino123";
-
+    public static String email;
+    public static String password;
 
     public static RequestSpecification req = new RequestSpecBuilder()
             .setBaseUri("https://stellarburgers.education-services.ru")
@@ -18,20 +17,22 @@ public class TestUser {
             .build();
 
 
-    public static void createTestUser() {
-        Response response = given()
+    public static Response createTestUser() {
+
+        email = "ivettisimos" + System.currentTimeMillis() + "@ya.ru";
+        password = "leozino123";
+        User user = new User(email, password, "Ivetti");
+        return RestAssured.given()
                 .spec(req)
-                .body("{\n" +
-                        "    \"email\": \"" + email + "\",\n" +
-                        "    \"password\": \"" + password +"\",\n" +
-                        "    \"name\": \"Ivetti\"\n" +
-                        "}")
+                .body(user)
                 .when()
-                .post("/api/auth/register")
-                .then()
+                .post("/api/auth/register");
+    }
+
+    public static void checkCreateUserStatus(Response response) {
+        response.then()
                 .log().all()
                 .statusCode(SC_OK)
                 .extract().response();
-
     }
 }
